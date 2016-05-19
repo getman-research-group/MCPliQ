@@ -36,9 +36,19 @@ Instructional files:
 
 Sample files:
 
-    1) POSCAR_pt18183nh3.txt
+    1) master_input.txt
+        This is a sample master_input.txt file currently set up to run a simulation of 
+        3 oxygen atoms (atomic_oxygen.txt) and one water molecule (water.txt) 
+        on a 3x3x3 Pt-111 surface (Pt_test.POSCAR).
+        
     2) Pt_test.POSCAR
+        This is a POSCAR file for a 3x3x3 Pt-111 surface.
+        
     3) atomic_oxygen.txt
+        This is a molecular internal coordinates file for an oxygen atom.
+        
     4) water.txt
-    5) master_input.txt
-    6) subvaspmc.sh
+        This is a molecular internal coordinates file for TIP3P water.
+        
+    5) subvaspmc.sh
+        This is a sample submission script for MCPliQ/VASP.
