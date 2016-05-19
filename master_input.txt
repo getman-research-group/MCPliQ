@@ -24,8 +24,8 @@ End at iteration: 800
 Max iterations: 5
 Maximum translation distance [A]: 1
 
-Number of different types of fluid molecules: 1
+Number of different types of fluid molecules: 2
 3 atomic_oxygen.txt
-
+1 water.txt
 
 
