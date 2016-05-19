@@ -1,0 +1,22 @@
+
+
+KNOWN BUGS
+///////////////////////////////////////////////////////////////////////
+
+Number of known bugs: 3
+
+
+1)  The translation and rotation moves don't work with molecules with more than 3 atoms.
+
+2)  If the surface and a fluid molecule have one or more of the same elements, the atom order in the surface's POSCAR
+	and the fluid molecule's internal coordinates file must match, or else the rotation/translation moves may not happen correctly.
+	What may happen instead is an unnecessary translation during a rotation move, or, during a translation move, two atoms in a molecule may
+	switch places (Ex: H-O-H becomes H-H-O)
+	This has to do with an as-of-yet unresolved error that's most likely in the replacement_sorter() function.
+	
+	For example, if the surface is a water surface, the fluid molecule is water, and the POSCAR's atom order is O H
+	water's internal coordinates file (for fluid molecule placement) must have an atom order of O H, too.
+	I haven't found a single pattern for when this occurs, but if either of the two errors described above occur,
+	rearrange the atom order of either the POSCAR (easier) or the fluid molecule's internal coordinates file (harder, especially for anything larger than ~4 or 5 atoms).
+
+3)  (Not really a bug, but...) The bond angle perturbation move isn't working yet.

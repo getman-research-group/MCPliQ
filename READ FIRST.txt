@@ -1,0 +1,322 @@
+Last updated: March 23rd, 2016
+
+Clemson University
+Department of Chemical and Biomolecular Engineering
+Author- Jeremy Arvay    jarvay@g.clemson.edu
+Advisor- Dr. Rachel Getman
+
+
+
+
+
+																				The Monte Carlo Plug-in for Quantum Methods, MCPliQ
+
+
+
+
+
+This tutorial file will take you through the steps of setting up a simulation to run a MCPliQ/VASP simulation on the Palmetto Computing Cluster.
+
+////////////Overview////////////
+I) Setting up master_input.txt
+II) Resubmitting jobs for further computation
+III) Testing a system with the built-in "falling particles" energy function
+IV) Readying MCPliQ for being compiled
+V) Compiling the MCPliQ code
+VI) Loading the proper files into your directory on Palmetto
+VII) Expected Program Output
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+
+I) SETTING UP MASTER_INPUT.TXT
+
+	This file contains every variable that the MCPliQ user can modify, outside of what can be changed in VASP or another energy function. Modifications to anything outside of
+	the master_input.txt file are not necessary for most purposes. However, if the user wants to use an energy function different from VASP or the "falling particles" function,
+	the energy_calc() function will have to be modified.
+
+	A detailed walkthrough of each user-controlled parameter in master_input.txt is given in the 
+	
+	"Using_the_master_input_file.txt"
+	
+	file, but in general, the user should make sure every variable is defined and has an appropriate value.
+	There are no variables which should remain undefined.
+	Appropriate values for each variable are covered in "Using_the_master_input_file.txt".
+	
+	I highly recommend reading "Using_the_master_input_file.txt" while setting up master_input.txt until
+	you feel comfortable with all of the parameters. A mistake here can either crash the run immediately or
+	produce trash results. Sometimes a mistake in the master_input.txt file can appear to be a problem stemming from
+	somewhere else, so always double-check this file.
+	
+			
+			
+			
+///////////////////////////////////////////////////////////////////////
+
+
+II)	RESUBMITTING JOBS FOR FURTHER COMPUTATION
+
+
+	****IF YOU WANT TO LEARN ABOUT SUBMITTING A JOB FOR THE VERY FIRST TIME, SKIP THIS SECTION****
+
+	This section goes over the files and procedure necessary for resubmitting a job that is forced to quit by time limitations imposed on the users of
+	whatever computer cluster is being used. For example, the Palmetto Cluster has maximum walltimes of 72 or 168 hours depending on the queue, so this becomes necessary if
+	simulations going beyond 72 or 168 hours are needed.
+	
+
+	New file type: Resubmittable POSCAR
+
+		At the end of every simulation, resubmittable POSCAR files will be created. Any POSCAR file produced by MCPliQ should have the two additional tags necessary
+		for starting a resubmission job.
+		
+		This POSCAR file is the same as POSCAR files produced by VASP or other programs, but it has two tags added to the rows containing the coordinates of each atom (shown below)
+
+			Example line:
+			
+		0.000000000000 0.5000000000000 0.880000000000  #4 3
+		
+		This is a line belonging to the 5th ( 4 +1) placed molecule. This molecule is of the 4th ( 3 +1) molecular type.
+		The value of each molecule type's molecular_type tag is dependent upon the order in which the molecules to be placed
+		are listed in the master_input.txt file.
+		
+		
+		
+		After the coordinates (first three numbers), there are two tags which are commented out by the #.
+		The first one (in this case, the 4) is the molecular_ID tag, and the second one (the 3) is the molecular_type tag.
+		Both of these tags are automatically added during the simulation, and aren't needed for the initial input POSCAR of a normal (non-resubmission) simulation.
+		
+		
+		Molecular_ID: Every molecule receives a unique integer ID (starting at 0), and all of the atoms making up a specific molecule share a molecular_ID tag. 
+					  This is necessary for the program to keep track of which atoms belong to which molecules.
+					  
+					  Atoms belonging to the original surface are all assigned a molecular_ID tag of -1.
+					  
+		Molecular_type: Every molecule type receives a unique integer ID (starting at 0), and every molecule of a specific type (e.g., all water molecules)
+						share this molecular_type tag.
+						This is necessary for the program to keep track of what bonding information is relevant for each atom/molecule during
+						a resubmitted job.
+						
+						Atoms belonging to the original surface are all assigned a molecular_type tag of -1.
+						
+
+						
+						
+	Procedure:
+	
+		The only file the user will need to change is the master_input.txt file. 
+		
+		In this file, the user will need to change the input POSCAR file name to the appropriate file name.		
+		The second line the user will need to change is the second line from the top (Resubmit). Change this value from 0 to 1.
+		Set "Resubmit" to 0 unless you're running a resubmission job.
+		The default "Resubmit" value is 0, and it needs to be changed to 1 for a resubmittable POSCAR to be used correctly.
+			
+	
+
+	
+///////////////////////////////////////////////////////////////////////
+
+
+III) TESTING A SYSTEM WITH THE BUILT-IN "FALLING PARTICLES" ENERGY FUNCTION
+
+
+	To edit, compile, and run the code on a personal machine, I've always used CodeBlocks. Codeblocks is freely available at www.codeblocks.org, is well-organized,
+	and user friendly. Anything else you're familiar with should also work just as well.
+
+	Because of a bug currently interfering with systems where the surface and fluid molecule share one or more elements (e.g., a water surface with water as the fluid molecule)
+	it may be necessary to test a new system to make sure the bug won't affect any jobs. To do this, you might need to edit a line in the MCPliQ code itself.
+	The only instance in which you'll need to edit this line is for a run on your personal machine.
+	On Linux-based systems, as long as MCPliQ is in the same directory as all the files being used for the run, specifying the present working directory isn't necessary.
+	This line is at the very beginning (within the first 50 lines) and is clearly marked. The line is:
+	
+	1) char file_prefix[1024] = ...
+		
+		Change the definition of this variable to whatever directory you'll be running the test case from.
+		
+		For example:
+			char* file_prefix = "D://";
+			
+			(This is for running a simulation where all files being used are kept directly in the D drive on your personal machine while the MCPliQ.c file is kept elsewhere)
+
+		
+		
+	The final change to make is in the master_input.txt file. Change the temperature to 0. This will allow the user to better see
+	the effect of the "falling particles" energy function without any interference from temperature effects.
+	
+	Also, I recommend keeping the number of fluid molecules being placed to a minimum (2 to ~5), so that any errors that do pop up are easily seen.
+		
+	
+	When viewing the results of a multi-iteration simulation with a visualising program, such as VMD, the fluid molecules around the surface
+	should appear to fall towards the surface (decrease their z coordinate). This is because this energy function interprets a molecular position
+	with a lower average z-position as being more stable. The function itself determines a system's energy by summing the z-coordinates of all atoms.
+	
+	
+	DESCRIPTION OF THE PROBLEM MENTIONED ABOVE
+	
+	The problem which might arise because of the unresolved bug can be seen during the rotation and translation moves carried out by the MCPliQ code.
+	
+		TRANSLATION- A normal translation move will result in the molecule keeping its original orientation and all atoms' positions changing by the same amount.
+					 
+					 A problematic translation will result in two or more of the molecule's atoms switching places with each other. The translation may still occur correctly otherwise,
+					 but a water which started out as H-O-H may now become H-H-O. Something similar may occur instead, but I've only seen this so far.
+
+		ROTATION- A normal rotation move will result in the molecule rotation a random amount around a single one of its atoms. 
+				  
+				  A problematic translation will result in a rotation with an additional translation. The additional translation has the effect of shifting what would
+				  otherwise be a correct rotation so that the atom around which the molecule is being rotated is no longer in the correct place.
+				  
+				  
+				  
+	Both of these errors should be easily seen during this test. If either of these errors do occur, the easiest fix is to reorder the elements in the input POSCAR
+	so that they more closely match the element order in the fluid molecule internal coordinates file.
+	
+	For example, an error occurs when the surface has an element order of 
+	HO
+	and the fluid molecule has an element order of 
+	OHH
+	
+	To fix this, it's easiest to rearrange the input POSCAR so that the element order is now
+	OH.
+	
+	I realize how inconvenient this can be, and I'm working on figuring out the issue now.
+	
+
+///////////////////////////////////////////////////////////////////////
+
+IV) SETTING UP THE MCPliQ CODE (for use with VASP)
+
+	An instance in which a change needs to be made to MCPliQ.c directly is if the compiled MCPliQ file is in a different directory
+	than the files which it will use. In this case, the current directory will need to be changed to indicate the location of these files.
+	Otherwise, MCPliQ will look in the directory where it's stored. This change is described at the beginning of the previous section (section III).
+	
+	Other than this, the only changes a user should have to make are in the master_input.txt file.
+	
+
+///////////////////////////////////////////////////////////////////////
+
+V) COMPILING THE MCPliQ CODE
+
+	To finish setting up the MCPliQ code on Palmetto, it will need to be compiled. 
+	An example statement compiling the MCPliQ code using the gcc compiler is below:
+		
+			gcc -lm MCPliQ.c -o mcpliq
+			
+		gcc: calls the compiler
+		-lm (LM, not 1M): includes the math library of functions. Without this, the compiler encounters errors.
+		MCPliQ.c: this is the file name of the MCPliQ code.
+		-o: tells the compiler to rename the executable file it produces.
+		mcpliq: this is the compiled executable's name.
+		
+		
+		********MESSAGE ABOUT THE WARNINGS YOU WILL ENCOUNTER********
+		
+			****When you compile the code, a small number of warnings (not errors) will appear on the screen. Currently, the number of
+			warnings is four, and none of them are important. The program will still function, so these can be ignored.****
+			(As long as there are only warnings and no errors, the code will compile and a useable executable will be produced.)
+	
+	
+///////////////////////////////////////////////////////////////////////
+
+
+VI) LOADING THE PROPER FILES INTO YOUR DIRECTORY ON PALMETTO
+
+	Aside from the files used directly by VASP or for calling VASP, several files are needed by the MCPliQ code.
+	The first is the master_input.txt file, which, unless you change the required file name in the MCPliQ code itself, must be exactly "master_input.txt".
+	The next file is the input POSCAR file, whose file name should exactly match the supplied input POSCAR file name in master_input.txt.
+	The final set of files necessary for the MCPliQ code to work are the fluid molecule internal coordinate files.
+	
+		
+		MCPliQ files
+		
+		1) master_input.txt
+		2) Input POSCAR file (the surface POSCAR)
+		3) Fluid molecule structure file(s)
+		4) MCPliQ.c executable file (compiled)
+		
+		
+		VASP-related files
+		
+		1) INCAR
+		2) POSCAR
+		3) POTCAR
+		4) KPOINTS
+		5) Submission script
+		
+		
+		I don't know how to set up the INCAR, POTCAR, or KPOINTS files, so I can't help with that.
+		The only thing I do know is that the first four files have to be named exactly as shown above, otherwise VASP won't work.
+	
+	
+		****A sample submission script (subvaspmc.sh) has been provided for reference.****
+		In your own submission script, make sure the correct executable (FMC_comp) is called.
+		The script I've provided calls FMC_comp. Make sure your executable matches this.
+	
+	
+	After these files have been uploaded, the MCPliQ code should be ready to be executed.
+	
+	
+///////////////////////////////////////////////////////////////////////
+
+
+VII) EXPECTED PROGRAM OUTPUT
+	
+	The MCPliQ code itself will write 5 types of files upon successfully finishing:
+	
+		1) .POSCAR
+			
+			These are visualization files, and show individual configurations. After MCPliQ has wrapped everything up, you'll be left with
+			however many POSCAR files as there were accepted iterations. You can view these using VMD or an equivalent program.
+		
+		2) .XDATCAR
+		
+			The XDATCAR file is another visualization file. The XDATCAR produced by MCPliQ will include all accepted configurations. Where the POSCAR
+			files are individual frames, the XDATCAR file is a movie and can be used to see the sequence of configurations as they occurred.
+			
+			If you're using VMD, the XDATCAR file will need a POSCAR file with the same file name (e.g., sample.XDATCAR and sample.POSCAR), or else
+			the file won't be viewable.
+			MCPliQ automatically provides you with the files POSCAR_0.POSCAR and POSCAR_0.XDATCAR, so you don't have to worry about that.
+		
+		3) energies.txt
+	
+			This output file provides the user with a general assortment of information for each move attempt, for both successfull and
+			unsuccessfull moves.
+			
+			At the top is a key for understanding the different symbols in the "Move type" column.
+			
+			
+			Column 1: The move counter counts both successful and unsuccessful move attempts.
+			
+			Column 2: The energy of the system during the current move attempt
+			
+			Column 3: Whether or not the current move attempt was accepted by the MC routine
+			
+			Column 4: A counter variable keeping track of the current number of accepted move attempts
+			
+			Column 5: The move type (translation, rotation, bond angle perturbation) for each move attempt
+			
+			Column 6: The current total number of successful (accepted) translation moves
+			
+			Column 7: The current total number of successful (accepted) rotation moves
+			
+			
+			At the bottom is a breakdown of the move types for the job as a whole.
+
+		4) excel_energies.txt
+				
+			This is a file ready to be directly imported into Microsoft Excel. It can be used to make a plot of system energy vs. move number to
+			see the progress of the system over the course of the simulation.
+			
+			
+		****A LAMMPS data file can also be generated, but this isn't automatic. This is gone over in more detail in Alternative_uses.txt.****
+			
+			
+	In addition to this, the supplied submission script is set up to create an output file called fmc.out where everything otherwise written to the screen will be printed and saved.
+	
+	
+	
+	
+	
+				
+
+	
