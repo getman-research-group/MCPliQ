@@ -12,6 +12,7 @@ Source code:
   MCPliQ.c
 
 Instructional files:
+
     1) READ FIRST.txt
         This file goes over how to use MCPliQ and what to expect from a successful run.
     
@@ -31,7 +32,7 @@ Instructional files:
     6) Known bugs.txt
         This file goes over all currently known unresolved issues with the MCPliQ source code.
     
-    
+
 Sample files:
     1) POSCAR_pt18183nh3.txt
     2) Pt_test.POSCAR
