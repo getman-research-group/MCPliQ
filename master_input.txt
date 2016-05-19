@@ -2,7 +2,7 @@ Falling particles (1 or 0): 1
 Resubmit (1 or 0): 0
 Write LAMMPS file (1 or 0): 0
 LAMMPS file extension: .water
-Input POSCAR name: Pt_atom.POSCAR
+Input POSCAR name: Pt_test.POSCAR
 Number of different types of surface atoms: 1
 
 Move attempt termination limit: 50
@@ -16,7 +16,7 @@ Translation: 100
 Rotation: 0
 Bond angle perturbation: 0
 
-Temperature [K]: 300
+Temperature [K]: 1200
 Anneal (1 or 0): 0
 Initial temperature [K]: 1000
 Begin at iteration: 0
@@ -24,9 +24,8 @@ End at iteration: 800
 Max iterations: 5
 Maximum translation distance [A]: 1
 
-Number of different types of fluid molecules: 2
-2 atomic_oxygen.txt
-1 atomic_platinum.txt
+Number of different types of fluid molecules: 1
+3 atomic_oxygen.txt
 
 
 
