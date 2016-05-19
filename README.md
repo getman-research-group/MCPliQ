@@ -34,6 +34,7 @@ Instructional files:
     
 
 Sample files:
+
     1) POSCAR_pt18183nh3.txt
     2) Pt_test.POSCAR
     3) atomic_oxygen.txt
