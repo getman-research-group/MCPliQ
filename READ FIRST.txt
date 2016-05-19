@@ -9,7 +9,7 @@ Advisor- Dr. Rachel Getman
 
 
 
-																				The Monte Carlo Plug-in for Quantum Methods, MCPliQ
+					The Monte Carlo Plug-in for Quantum Methods, MCPliQ
 
 
 
