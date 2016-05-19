@@ -9,7 +9,8 @@ to explore the configurational space of a chemical system.
 #File Directory
 
 Source code:
-  MCPliQ.c
+
+    1) MCPliQ.c
 
 Instructional files:
 
