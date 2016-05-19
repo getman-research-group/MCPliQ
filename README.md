@@ -1,8 +1,8 @@
 # MCPliQ
 A Monte Carlo Plug-in for Quantum Methods
-
 #___________________________________________
-MCPliQ is 
+MCPliQ is a Monte Carlo algorithm designed for pairing with quantum methods, such as VASP or Gaussian,
+to explore the configurational space of a chemical system.
 
 
 #___________________________________________
