@@ -19,7 +19,7 @@
 
 /***********************************CHANGE DIRECTORY HERE************************************/
 
-char file_prefix[1024] = "D://";
+char file_prefix[1024] = "";
 
 //LEAVE BLANK IF RUNNING ON PALMETTO
 //The system automatically adds the pwd to any file names
